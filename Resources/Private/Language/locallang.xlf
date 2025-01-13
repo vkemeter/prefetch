@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" original="" datatype="plaintext" date="2025-01-09T10:25:54+01:00">
+		<body>
+			<trans-unit id="field.pages.tx_prefetch_enable.description" resname="field.pages.tx_prefetch_enable.description">
+				<source>Pre-render this page to improve initial page load times. This process loads the page in the background, so it&#39;s ready to be displayed quickly when you visit it.</source>
+			</trans-unit>
+			<trans-unit id="field.pages.tx_prefetch_enable.items.labelChecked" resname="field.pages.tx_prefetch_enable.items.labelChecked">
+				<source>This page is pre-rendered</source>
+			</trans-unit>
+			<trans-unit id="field.pages.tx_prefetch_enable.items.labelUnchecked" resname="field.pages.tx_prefetch_enable.items.labelUnchecked">
+				<source>This page is not pre-rendered</source>
+			</trans-unit>
+			<trans-unit id="field.pages.tx_prefetch_enable.label" resname="field.pages.tx_prefetch_enable.label">
+				<source>Pre-render this Page</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
