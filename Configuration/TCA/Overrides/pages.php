@@ -8,6 +8,7 @@ call_user_func(
             'tx_prefetch_enable' => [
                 'label'       => 'LLL:EXT:prefetch/Resources/Private/Language/locallang.xlf:field.pages.tx_prefetch_enable.label',
                 'description' => 'LLL:EXT:prefetch/Resources/Private/Language/locallang.xlf:field.pages.tx_prefetch_enable.description',
+                'onChange'    => 'reload',
                 'config'      => [
                     'type'       => 'check',
                     'renderType' => 'checkboxLabeledToggle',
@@ -20,13 +21,43 @@ call_user_func(
                     ],
                 ],
             ],
+            'tx_prefetch_type' => [
+                'label'       => 'LLL:EXT:prefetch/Resources/Private/Language/locallang.xlf:field.pages.tx_prefetch_type.label',
+                'description' => 'LLL:EXT:prefetch/Resources/Private/Language/locallang.xlf:field.pages.tx_prefetch_type.description',
+                'displayCond' => 'FIELD:tx_prefetch_enable:REQ:true',
+                'config'      => [
+                    'type'       => 'select',
+                    'renderType' => 'selectSingle',
+                    'items'      => [
+                        ['prefetch', \Supseven\Prefetch\Enumerations\Types::PREFETCH],
+                        ['prerender', \Supseven\Prefetch\Enumerations\Types::PRERENDER],
+                    ],
+                ],
+
+            ],
+            'tx_prefetch_eagerness' => [
+                'label'       => 'LLL:EXT:prefetch/Resources/Private/Language/locallang.xlf:field.pages.tx_prefetch_eagerness.label',
+                'description' => 'LLL:EXT:prefetch/Resources/Private/Language/locallang.xlf:field.pages.tx_prefetch_eagerness.description',
+                'displayCond' => 'FIELD:tx_prefetch_enable:REQ:true',
+                'config'      => [
+                    'type'       => 'select',
+                    'renderType' => 'selectSingle',
+                    'items'      => [
+                        ['immediate', 0],
+                        ['eager', 1],
+                        ['moderate', 2],
+                        ['conservative', 3],
+                    ],
+                ],
+
+            ],
         ];
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns($table, $additionalColumns);
 
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette(
             $table,
             'caching',
-            'tx_prefetch_enable'
+            '--linebreak--,tx_prefetch_enable,tx_prefetch_type,tx_prefetch_eagerness'
         );
 
     },

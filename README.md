@@ -10,6 +10,8 @@ Eine TYPO3-Extension um die neue Speculation-Rules-API in TYPO3 zu integrieren. 
 ## Features
 
 - Enable Prerendering of Pages
+- Set the Type (prerender, prefetch)
+- Set the Eagerness per page
 
 ## Release Notes
 

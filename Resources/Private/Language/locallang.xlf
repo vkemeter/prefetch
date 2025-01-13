@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" original="" datatype="plaintext" date="2025-01-09T10:25:54+01:00">
+	<file source-language="en" original="" datatype="plaintext" date="2025-01-13T19:21:45+01:00">
 		<body>
-			<trans-unit id="field.pages.tx_prefetch_enable.description" resname="field.pages.tx_prefetch_enable.description">
-				<source>Pre-render this page to improve initial page load times. This process loads the page in the background, so it&#39;s ready to be displayed quickly when you visit it.</source>
+			<trans-unit id="field.pages.tx_prefetch_eagerness.description">
+				<source>Immediate: The prefetching of pages occurs instantly when a user loads a page.&#xA;&#xA;Eager: Fetching starts once the current page transfer is complete and the browser is &#xA;idle.&#xA;&#xA;Moderate: Fetching starts only when the user interacts with the page, such as scrolling or clicking.&#xA;&#xA;Conservative: Fetching occurs when the user clicks a link or performs another action indicating they will soon need the resource.</source>
 			</trans-unit>
-			<trans-unit id="field.pages.tx_prefetch_enable.items.labelChecked" resname="field.pages.tx_prefetch_enable.items.labelChecked">
-				<source>This page is pre-rendered</source>
+			<trans-unit id="field.pages.tx_prefetch_eagerness.label">
+				<source>Eagerness</source>
 			</trans-unit>
-			<trans-unit id="field.pages.tx_prefetch_enable.items.labelUnchecked" resname="field.pages.tx_prefetch_enable.items.labelUnchecked">
-				<source>This page is not pre-rendered</source>
+			<trans-unit id="field.pages.tx_prefetch_enable.description">
+				<source>Preload this page with the Speculation-API settings</source>
 			</trans-unit>
-			<trans-unit id="field.pages.tx_prefetch_enable.label" resname="field.pages.tx_prefetch_enable.label">
-				<source>Pre-render this Page</source>
+			<trans-unit id="field.pages.tx_prefetch_enable.items.labelChecked">
+				<source>This page will be preloaded</source>
+			</trans-unit>
+			<trans-unit id="field.pages.tx_prefetch_enable.items.labelUnchecked">
+				<source>This page will not be preloaded</source>
+			</trans-unit>
+			<trans-unit id="field.pages.tx_prefetch_enable.label">
+				<source>Preloading</source>
+			</trans-unit>
+			<trans-unit id="field.pages.tx_prefetch_type.description">
+				<source>Prefetching hints to the browser that a resource might be needed in the future.&#xA;&#xA;Prerendering involves rendering a page in the background so it can be quickly displayed when the user navigates to it.</source>
+			</trans-unit>
+			<trans-unit id="field.pages.tx_prefetch_type.label">
+				<source>Type</source>
 			</trans-unit>
 		</body>
 	</file>

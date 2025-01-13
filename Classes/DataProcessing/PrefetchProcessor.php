@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Supseven\Prefetch\DataProcessing;
 
 use Doctrine\DBAL\Exception;
+use Supseven\Prefetch\Enumerations\Eagerness;
+use Supseven\Prefetch\Enumerations\Types;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
@@ -43,7 +45,7 @@ readonly class PrefetchProcessor implements DataProcessorInterface
         $nonce = $cObj->getRequest()->getAttribute('nonce')->value;
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable('pages');
         $pages = $queryBuilder
-            ->select('uid', 'slug')
+            ->select('uid', 'slug', 'tx_prefetch_type', 'tx_prefetch_eagerness')
             ->from('pages')
             ->where(
                 $queryBuilder->expr()->eq('tx_prefetch_enable', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
@@ -51,25 +53,34 @@ readonly class PrefetchProcessor implements DataProcessorInterface
             ->executeQuery()
             ->fetchAllAssociative();
 
-        $urls = [];
-
-        foreach ($pages as $page) {
-            $urls[] = $page['slug'] . '/';
-        }
-
+        $json = $this->convertArrayToSpeculationRules($pages);
         $frontendController = $cObj->getRequest()->getAttribute('frontend.controller');
-
-        $json = [
-            'prerender' => [
-                [
-                    'urls'      => $urls,
-                    'eagerness' => $processorConfiguration['eagerness'] ?? 'moderate',
-                ],
-            ],
-        ];
-
         $frontendController->additionalHeaderData['foobar'] = '<script type="speculationrules" nonce="' . $nonce . '">' . json_encode($json) . '</script>';
 
         return $processedData;
+    }
+
+    private function convertArrayToSpeculationRules(array $array): array
+    {
+        $json = [];
+
+        array_walk($array, function ($item) use (&$json): void {
+            $type = strtolower(Types::getHumanReadableName($item['tx_prefetch_type']));
+            $eagerness = strtolower(Eagerness::getHumanReadableName($item['tx_prefetch_eagerness']));
+
+            $key = array_search($eagerness, array_column($json[$type] ?? [], 'eagerness'));
+            $slug = $item['slug'] . ($item['slug'] !== '/' ? '/' : '');
+
+            if ($key !== false) {
+                $json[$type][$key]['urls'][] = $slug;
+            } else {
+                $json[$type][] = [
+                    'urls'      => [ $slug ],
+                    'eagerness' => $eagerness,
+                ];
+            }
+        });
+
+        return $json;
     }
 }
