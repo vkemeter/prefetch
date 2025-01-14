@@ -2,9 +2,6 @@ page {
     10 {
         dataProcessing {
             1736329168 = Supseven\Prefetch\DataProcessing\PrefetchProcessor
-            1736329168 {
-                eagerness = moderate
-            }
         }
     }
 }

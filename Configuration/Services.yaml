@@ -8,3 +8,4 @@ services:
     public: true
     arguments:
       $connectionPool: '@TYPO3\CMS\Core\Database\ConnectionPool'
+      $siteFinder: '@TYPO3\CMS\Core\Site\SiteFinder'

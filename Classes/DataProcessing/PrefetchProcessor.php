@@ -8,6 +8,7 @@ use Doctrine\DBAL\Exception;
 use Supseven\Prefetch\Enumerations\Eagerness;
 use Supseven\Prefetch\Enumerations\Types;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\ContentObject\DataProcessorInterface;
 use TYPO3\CMS\Frontend\ContentObject\Exception\ContentRenderingException;
@@ -24,7 +25,7 @@ readonly class PrefetchProcessor implements DataProcessorInterface
      *
      * @param ConnectionPool $connectionPool The connection pool instance.
      */
-    public function __construct(protected ConnectionPool $connectionPool)
+    public function __construct(protected ConnectionPool $connectionPool, protected SiteFinder $siteFinder)
     {
     }
 
@@ -53,20 +54,32 @@ readonly class PrefetchProcessor implements DataProcessorInterface
             ->executeQuery()
             ->fetchAllAssociative();
 
-        $json = $this->convertArrayToSpeculationRules($pages);
+        $rootPageId = $cObj->getRequest()->getAttribute('site')->getRootPageId();
+        $json = $this->convertArrayToSpeculationRules($pages, $rootPageId);
         $frontendController = $cObj->getRequest()->getAttribute('frontend.controller');
         $frontendController->additionalHeaderData['foobar'] = '<script type="speculationrules" nonce="' . $nonce . '">' . json_encode($json) . '</script>';
 
         return $processedData;
     }
 
-    private function convertArrayToSpeculationRules(array $array): array
+    /**
+     * Converts an array of items into a structured set of speculation rules.
+     *
+     * @param array $array The array containing items to be converted into speculation rules.
+     * @param int $rootPageId The root page ID used to filter items based on their site context.
+     * @return array Returns an array of speculation rules structured by type and eagerness.
+     */
+    private function convertArrayToSpeculationRules(array $array, int $rootPageId): array
     {
         $json = [];
 
-        array_walk($array, function ($item) use (&$json): void {
+        array_walk($array, function ($item) use (&$json, $rootPageId): void {
             $type = strtolower(Types::getHumanReadableName($item['tx_prefetch_type']));
             $eagerness = strtolower(Eagerness::getHumanReadableName($item['tx_prefetch_eagerness']));
+
+            if ($this->siteFinder->getSiteByPageId($item['uid'])->getRootPageId() !== $rootPageId) {
+                return;
+            }
 
             $key = array_search($eagerness, array_column($json[$type] ?? [], 'eagerness'));
             $slug = $item['slug'] . ($item['slug'] !== '/' ? '/' : '');
@@ -75,7 +88,7 @@ readonly class PrefetchProcessor implements DataProcessorInterface
                 $json[$type][$key]['urls'][] = $slug;
             } else {
                 $json[$type][] = [
-                    'urls'      => [ $slug ],
+                    'urls'      => [$slug],
                     'eagerness' => $eagerness,
                 ];
             }
