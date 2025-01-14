@@ -43,6 +43,8 @@ readonly class PrefetchProcessor implements DataProcessorInterface
      */
     public function process(ContentObjectRenderer $cObj, array $contentObjectConfiguration, array $processorConfiguration, array $processedData): array
     {
+        $activePageId = $cObj->getRequest()->getAttribute('routing')->getPageId() ?? 0;
+
         $nonce = $cObj->getRequest()->getAttribute('nonce')->value;
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable('pages');
         $pages = $queryBuilder
@@ -50,6 +52,9 @@ readonly class PrefetchProcessor implements DataProcessorInterface
             ->from('pages')
             ->where(
                 $queryBuilder->expr()->eq('tx_prefetch_enable', $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT))
+            )
+            ->andWhere(
+                $queryBuilder->expr()->neq('uid', $queryBuilder->createNamedParameter($activePageId, \PDO::PARAM_INT)),
             )
             ->executeQuery()
             ->fetchAllAssociative();
