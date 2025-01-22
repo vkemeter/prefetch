@@ -61,8 +61,11 @@ readonly class PrefetchProcessor implements DataProcessorInterface
 
         $rootPageId = $cObj->getRequest()->getAttribute('site')->getRootPageId();
         $json = $this->convertArrayToSpeculationRules($pages, $rootPageId);
-        $frontendController = $cObj->getRequest()->getAttribute('frontend.controller');
-        $frontendController->additionalHeaderData['foobar'] = '<script type="speculationrules" nonce="' . $nonce . '">' . json_encode($json) . '</script>';
+
+        if (!empty($json)) {
+            $frontendController = $cObj->getRequest()->getAttribute('frontend.controller');
+            $frontendController->additionalHeaderData['foobar'] = '<script type="speculationrules" nonce="' . $nonce . '">' . json_encode($json) . '</script>';
+        }
 
         return $processedData;
     }
